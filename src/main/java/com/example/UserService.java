@@ -2,30 +2,33 @@ package main.java.com.example;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class UserService {
 
-    // SECURITY ISSUE: Hardcoded credentials
-    private String password = "admin123";
-
-    // VULNERABILITY: SQL Injection
-    public void findUser(String username) throws Exception {
-
-        Connection conn =
-            DriverManager.getConnection("jdbc:mysql://localhost/db",
-                    "root", password);
-
-        Statement st = conn.createStatement();
-
-        String query =
-            "SELECT * FROM users WHERE name = '" + username + "'";
-
-        st.executeQuery(query);
+    public void findUser(String username) throws SQLException {
+        String query = "SELECT name FROM users WHERE name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(query)) {
+            st.setString(1, username);
+            st.executeQuery();
+        }
     }
 
-    // SMELL: Unused method
-    public void notUsed() {
-        System.out.println("I am never called");
+    public void deleteUser(String username) throws SQLException {
+        String query = "DELETE FROM users WHERE name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(query)) {
+            st.setString(1, username);
+            st.executeUpdate();
+        }
+    }
+
+    private Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost/db";
+        String user = "root";
+        String password = System.getenv("DB_PASSWORD");
+        return DriverManager.getConnection(url, user, password);
     }
 }
