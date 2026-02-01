@@ -2,48 +2,35 @@ package main.java.com.example;
 
 public class Calculator {
 
-    // EVEN WORSE: longer, more complex, duplicated logic
+    private static final String OP_ADD = "add";
+    private static final String OP_ADD_AGAIN = "add-again";
+    private static final String OP_SUB = "sub";
+    private static final String OP_SUB_AGAIN = "sub-again";
+    private static final String OP_MUL = "mul";
+    private static final String OP_DIV = "div";
+    private static final String OP_MOD = "mod";
+    private static final String OP_POW = "pow";
+
     public int calculate(int a, int b, String op) {
-        if(op.equals("add")) {
-            return a + b;
-        } else if(op.equals("add-again")) {
-            return a + b; // DUPLICATION
-        } else if(op.equals("sub")) {
-            return a - b;
-        } else if(op.equals("sub-again")) {
-            return a - b; // DUPLICATION
-        } else if(op.equals("mul")) {
-            return a * b;
-        } else if(op.equals("div")) {
-            if(b == 0) {
-                return 0;
-            } else {
-                return a / b;
-            }
-        } else if(op.equals("mod")) {
-            return a % b;
-        } else if(op.equals("pow")) {
-            int result = 1;
-            for(int i = 0; i < b; i++) {
-                result = result * a;
-            }
-            return result;
-        } else {
+        if (op == null) {
             return 0;
         }
-    }
 
-    // Code Duplication (students must remove)
-    public int addNumbers(int x, int y) {
-        return x + y;
-    }
-
-    public int sumValues(int a, int b) {
-        return a + b;
-    }
-
-    // INTENTIONAL DUPLICATION
-    public int addAgain(int a, int b) {
-        return a + b;
+        switch (op) {
+            case OP_ADD, OP_ADD_AGAIN:
+                return a + b;
+            case OP_SUB, OP_SUB_AGAIN:
+                return a - b;
+            case OP_MUL:
+                return a * b;
+            case OP_DIV:
+                return (b == 0) ? 0 : a / b;
+            case OP_MOD:
+                return a % b;
+            case OP_POW:
+                return (int) Math.pow(a, b);
+            default:
+                return 0;
+        }
     }
 }
