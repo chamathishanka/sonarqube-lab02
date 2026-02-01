@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,13 +47,29 @@ class AppSimpleTest {
     }
     
     @Test
-    void testMainMethod_VariousExceptions() {
-        // Test multiple exception scenarios to increase coverage
-        String[] args = {};
+    void testMainMethod_DatabaseOperations() {
+        // Test that specifically exercises the database operation calls in main
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
         
-        // Should consistently throw SQLException due to no database
-        for (int i = 0; i < 3; i++) {
-            assertThrows(Exception.class, () -> App.main(args));
+        try {
+            String[] args = {};
+            // This should execute calculator.calculate() and print "15", 
+            // then fail on UserService operations
+            Exception thrownException = assertThrows(Exception.class, () -> App.main(args));
+            
+            String output = outputStream.toString();
+            assertTrue(output.contains("15")); // Verify calculator executed
+            
+            // Verify it's a SQL-related exception (proving UserService methods were called)
+            assertTrue(thrownException instanceof SQLException || 
+                      thrownException.getCause() instanceof SQLException ||
+                      thrownException.getMessage().toLowerCase().contains("sql") ||
+                      thrownException.getMessage().toLowerCase().contains("connection"));
+            
+        } finally {
+            System.setOut(originalOut);
         }
     }
     

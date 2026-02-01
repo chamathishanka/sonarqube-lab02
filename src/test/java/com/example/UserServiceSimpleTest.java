@@ -91,21 +91,49 @@ class UserServiceSimpleTest {
     }
     
     @Test
-    void testNotUsed_MultipleCalls() {
-        // Test calling the unused method multiple times
-        assertDoesNotThrow(() -> {
-            userService.notUsed();
-            userService.notUsed();
-            userService.notUsed();
-        });
+    void testFindUser_WithUnicodeCharacters() {
+        // Test with unicode characters
+        assertThrows(SQLException.class, () -> userService.findUser("用户"));
     }
     
     @Test
-    void testMultipleOperations() {
-        // Test calling both methods in sequence - first method call will throw SQLException
-        assertThrows(SQLException.class, () -> {
-            userService.findUser("user1");
-            userService.deleteUser("user1"); // This line won't be reached due to exception above
-        });
+    void testDeleteUser_WithUnicodeCharacters() {
+        // Test with unicode characters
+        assertThrows(SQLException.class, () -> userService.deleteUser("用户"));
+    }
+    
+    @Test
+    void testFindUser_WithNumbers() {
+        // Test with numeric username
+        assertThrows(SQLException.class, () -> userService.findUser("12345"));
+    }
+    
+    @Test
+    void testDeleteUser_WithNumbers() {
+        // Test with numeric username
+        assertThrows(SQLException.class, () -> userService.deleteUser("67890"));
+    }
+    
+    @Test
+    void testUserService_ConstructorAndState() {
+        // Test that UserService can be instantiated and methods called
+        UserService service = new UserService();
+        assertNotNull(service);
+        
+        // Verify that calling methods throws SQLException (proving they execute)
+        assertThrows(SQLException.class, () -> service.findUser("admin"));
+        assertThrows(SQLException.class, () -> service.deleteUser("admin"));
+    }
+    
+    @Test
+    void testFindUserOnly() {
+        // Test findUser in isolation to ensure SQLException is thrown
+        assertThrows(SQLException.class, () -> userService.findUser("user1"));
+    }
+    
+    @Test
+    void testDeleteUserOnly() {
+        // Test deleteUser in isolation to ensure SQLException is thrown
+        assertThrows(SQLException.class, () -> userService.deleteUser("user1"));
     }
 }
