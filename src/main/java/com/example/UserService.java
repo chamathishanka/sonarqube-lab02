@@ -30,7 +30,7 @@ public class UserService {
         System.out.println("I am never called");
     }
 
-    // SQL injection - FIXED with PreparedStatement
+    // SQL injection - FIXED with PreparedStatement SQL
     public void deleteUser(String username) throws SQLException {
         try (Connection conn =
             DriverManager.getConnection("jdbc:mysql://localhost/db",
